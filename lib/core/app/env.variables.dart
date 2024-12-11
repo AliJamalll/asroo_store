@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+enum EnvTypeEnum {
+  dev,
+  prod,
+}
+
+class EnvVariable {
+  EnvVariable._();
+
+  static final EnvVariable instance = EnvVariable._();
+
+  String _envType = '';
+
+  Future<void> init({required EnvTypeEnum envType}) async {
+    switch (envType) {
+      case EnvTypeEnum.dev:
+        await dotenv.load(fileName: '.env.dev');
+        break; // Add break to prevent fall-through
+      case EnvTypeEnum.prod:
+        await dotenv.load(fileName: '.env.prod');
+        break; // Add break to prevent fall-through
+    }
+    _envType = dotenv.get('ENV_TYPE', fallback: '');
+  }
+
+  bool get debugMode => _envType == 'dev';
+}
